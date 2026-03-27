@@ -135,3 +135,22 @@ Widget buildBookCard({required String title, required String subtitle, required 
     ),
   );
 }
+
+Widget buildCategoryCard(String category, Color color) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    margin: const EdgeInsets.only(right: 15),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(15),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      category,
+      style: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}

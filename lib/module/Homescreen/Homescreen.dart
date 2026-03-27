@@ -40,6 +40,29 @@ class Homescreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
+                "Categories",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+            ),
+            const SizedBox(height: 15),
+           SizedBox(
+            height: 50,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(left: 20),
+              children: [
+                buildCategoryCard("Fiction", Colors.brown),
+                buildCategoryCard("Non-Fiction", Colors.deepOrange),
+                buildCategoryCard("Sci-Fi", Colors.teal),
+                buildCategoryCard("Fantasy", Colors.purple),
+                buildCategoryCard("Biography", Colors.indigo),
+              ],
+            ),
+          ),
+            const SizedBox(height: 15),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
                 "Recommended for You",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
