@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:khmer_read/module/Homescreen/Homescreen.dart';
+import 'package:khmer_read/module/Homescreen/MainScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const BookReaderHome(),
+      home: const MainScreen(),
     );
   }
 }
