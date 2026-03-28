@@ -23,10 +23,10 @@ class _MainScreenState extends State<MainScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: const [
-          Homescreen(),      // Home
-          SearchScreen(),     // Create this
-          SavedScreen(),      // Create this
-          SettingsScreen(),   // Create this
+          Homescreen(),
+          SearchScreen(),
+          SavedScreen(),
+          SettingsScreen(),
         ],
       ),
 
