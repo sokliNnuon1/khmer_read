@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khmer_read/module/Calenda/CalendaScreen.dart';
 import 'package:khmer_read/module/Homescreen/Buttombar.dart';
 import 'package:khmer_read/module/Homescreen/Homescreen.dart';
 import 'package:khmer_read/module/Saved/SavedScreen.dart';
@@ -25,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
         children: const [
           Homescreen(),
           SearchScreen(),
+          CalendarScreen(),
           SavedScreen(),
           SettingsScreen(),
         ],

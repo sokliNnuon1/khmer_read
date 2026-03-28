@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -9,99 +8,185 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  int _selectedCategory = 0;
-  final List<String> _categories = ["All", "Architecture", "Minimalist", "Luxury", "Outdoor", "Decor"];
+  String selectedCategory = "All";
+  final List<String> categories = ["All", "Digital Art", "Architecture", "Photography", "UI Design"];
+
+  final List<Map<String, dynamic>> searchData = [
+    {
+      'title': 'Minimalist Abstract',
+      'author': 'Alex Rivers',
+      'category': 'Digital Art',
+      'rating': 4.8,
+      'image': 'https://picsum.photos/seed/61/400/500',
+    },
+    {
+      'title': 'Concrete Jungle',
+      'author': 'Sara Chen',
+      'category': 'Architecture',
+      'rating': 4.5,
+      'image': 'https://picsum.photos/seed/65/400/500',
+    },
+    {
+      'title': 'Golden Hour',
+      'author': 'Marcus Vane',
+      'category': 'Photography',
+      'rating': 4.9,
+      'image': 'https://picsum.photos/seed/99/400/500',
+    },
+    {
+      'title': 'Minimalist Abstract',
+      'author': 'Alex Rivers',
+      'category': 'Digital Art',
+      'rating': 4.8,
+      'image': 'https://picsum.photos/seed/61/400/500',
+    },
+    {
+      'title': 'Concrete Jungle',
+      'author': 'Sara Chen',
+      'category': 'Architecture',
+      'rating': 4.5,
+      'image': 'https://picsum.photos/seed/65/400/500',
+    },
+    {
+      'title': 'Golden Hour',
+      'author': 'Marcus Vane',
+      'category': 'Photography',
+      'rating': 4.9,
+      'image': 'https://picsum.photos/seed/99/400/500',
+    },
+    {
+      'title': 'Minimalist Abstract',
+      'author': 'Alex Rivers',
+      'category': 'Digital Art',
+      'rating': 4.8,
+      'image': 'https://picsum.photos/seed/61/400/500',
+    },
+    {
+      'title': 'Concrete Jungle',
+      'author': 'Sara Chen',
+      'category': 'Architecture',
+      'rating': 4.5,
+      'image': 'https://picsum.photos/seed/65/400/500',
+    },
+    {
+      'title': 'Golden Hour',
+      'author': 'Marcus Vane',
+      'category': 'Photography',
+      'rating': 4.9,
+      'image': 'https://picsum.photos/seed/99/400/500',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final filteredData = selectedCategory == "All"
+        ? searchData
+        : searchData.where((item) => item['category'] == selectedCategory).toList();
     return Scaffold(
-      backgroundColor: const Color(0xFFFBFBFB),
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            // 1. Premium Search Header
-            _buildSearchHeader(),
-
-            // 2. Animated Category Selector
-            _buildCategoryList(),
-
-            // 3. Search Results
-            Expanded(
-              child: _buildSearchResults(),
+      backgroundColor: const Color(0xFFF8F9FD),
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 160, // Increased height to fit search + categories
+            floating: true,
+            pinned: true,
+            elevation: 0,
+            stretch: true,
+            backgroundColor: const Color(0xFFF8F9FD),
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [StretchMode.blurBackground],
+              background: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildSearchBar(),
+                  const SizedBox(height: 70), // Space for the 'bottom' widget
+                ],
+              ),
             ),
-          ],
-        ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(70),
+              child: _buildCategoryRow(),
+            ),
+          ),
+
+          // 🔷 Results List
+          filteredData.isEmpty 
+          ? const SliverFillRemaining(
+              child: Center(child: Text("No items found in this category")),
+            )
+          : SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => _buildResultCard(filteredData[index]),
+                  childCount: filteredData.length,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 
-  Widget _buildSearchHeader() {
+  Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            )
           ],
         ),
-        child: TextField(
+        child: const TextField(
           decoration: InputDecoration(
-            hintText: "Search collections...",
-            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 16),
-            prefixIcon: const Icon(Icons.search_rounded, color: Colors.black, size: 24),
-            suffixIcon: Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.tune_rounded, size: 18, color: Colors.black),
-            ),
+            icon: Icon(Icons.search, color: Color(0xFF00519C)),
+            hintText: "Explore amazing creations...",
+            hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 15),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCategoryList() {
-    return SizedBox(
-      height: 45,
+  Widget _buildCategoryRow() {
+    return Container(
+      height: 70,
+      color: const Color(0xFFF8F9FD), // Matches background
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _categories.length,
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          bool isActive = _selectedCategory == index;
+          bool isSelected = selectedCategory == categories[index];
           return GestureDetector(
-            onTap: () => setState(() => _selectedCategory = index),
+            onTap: () => setState(() => selectedCategory = categories[index]),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 25),
               decoration: BoxDecoration(
-                color: isActive ? Colors.black : Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: isActive ? Colors.black : Colors.grey.shade200,
-                ),
+                color: isSelected ? const Color(0xFF00519C) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isSelected 
+                  ? [BoxShadow(color: const Color(0xFF00519C).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] 
+                  : [],
               ),
               alignment: Alignment.center,
               child: Text(
-                _categories[index],
+                categories[index],
                 style: TextStyle(
-                  color: isActive ? Colors.white : Colors.grey[600],
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  color: isSelected ? Colors.white : Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -111,88 +196,69 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildSearchResults() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(20),
-      physics: const BouncingScrollPhysics(),
-      itemCount: 8,
-      itemBuilder: (context, index) {
-        return _ResultCard(index: index);
-      },
-    );
-  }
-}
-
-class _ResultCard extends StatelessWidget {
-  final int index;
-  const _ResultCard({required this.index});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildResultCard(Map<String, dynamic> item) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      height: 120,
+      margin: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 10))
         ],
       ),
       child: Row(
         children: [
-          // Image Section
-          Hero(
-            tag: 'search_img_$index',
-            child: Container(
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.horizontal(left: Radius.circular(24)),
-                image: DecorationImage(
-                  image: NetworkImage('https://picsum.photos/seed/${index + 100}/400/400'),
-                  fit: BoxFit.cover,
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.network(item['image'], width: 100, height: 100, fit: BoxFit.cover),
+              ),
+              Positioned(
+                top: 8, left: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.7), borderRadius: BorderRadius.circular(8)),
+                  child: Text(item['category'], style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
                 ),
               ),
-            ),
+            ],
           ),
-          // Info Section
+          const SizedBox(width: 16),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "TRENDING NOW",
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.5,
-                      color: Colors.orange[800],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.person_outline, size: 14, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(item['author'], style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.star_rounded, size: 16, color: Colors.amber),
+                          const SizedBox(width: 4),
+                          Text(item['rating'].toString(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.amber)),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Design Concept #2026",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "By Creative Studio",
-                    style: TextStyle(color: Colors.grey[500], fontSize: 13),
-                  ),
-                ],
-              ),
+                    const Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Color(0xFF00519C)),
+                  ],
+                ),
+              ],
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.black26),
           ),
         ],
       ),
