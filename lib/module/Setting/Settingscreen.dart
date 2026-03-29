@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khmer_read/module/Simple/FloatingHeaderExample.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,7 +24,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
-                top: 60, left: 20, right: 20, bottom: 25),
+              top: 60,
+              left: 20,
+              right: 20,
+              bottom: 25,
+            ),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF00519C), Color(0xFF3A7BD5)],
@@ -40,7 +45,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const CircleAvatar(
                   radius: 30,
                   backgroundImage: NetworkImage(
-                      "https://i.pravatar.cc/300"), // placeholder
+                    "https://i.pravatar.cc/300",
+                  ), // placeholder
                 ),
                 const SizedBox(width: 15),
                 Column(
@@ -49,17 +55,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Text(
                       "NUON SOKLIN",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 5),
                     Text(
                       "Premium User",
                       style: TextStyle(color: Colors.white70),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -73,32 +80,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   // 🔹 GENERAL
-                  const Text("General",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "General",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 10),
-
                   _buildTile(
                     icon: Icons.person,
                     title: "Profile",
                     onTap: () {},
                   ),
                   _buildTile(
+                    icon: Icons.person,
+                    title: "Simple",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FloatingHeaderExample(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildTile(
                     icon: Icons.lock,
                     title: "Change Password",
                     onTap: () {},
                   ),
-
                   const SizedBox(height: 20),
-
-                  // 🔹 PREFERENCES
-                  const Text("Preferences",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Preferences",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 10),
-
                   _buildSwitchTile(
                     icon: Icons.dark_mode,
                     title: "Dark Mode",
@@ -129,9 +144,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 20),
 
                   // 🔹 SUPPORT
-                  const Text("Support",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Support",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 10),
 
                   _buildTile(
@@ -162,8 +178,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Text(
                           "Logout",
                           style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -173,13 +190,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  // 🔹 NORMAL TILE
   Widget _buildTile({
     required IconData icon,
     required String title,
@@ -201,7 +217,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // 🔹 SWITCH TILE
   Widget _buildSwitchTile({
     required IconData icon,
     required String title,
@@ -223,33 +238,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // 🌐 LANGUAGE DIALOG
   void _showLanguageBottomSheet() {
-    // Local variable to track selection inside the sheet before final "Save"
-    String tempLanguage = language; 
+    String tempLanguage = language;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return StatefulBuilder( // Allows updating the sheet UI independently
+        return StatefulBuilder(
           builder: (context, setModalState) {
             return DraggableScrollableSheet(
-              initialChildSize: 0.7, // 70% of screen is usually enough for beauty
+              initialChildSize:
+                  0.7, // 70% of screen is usually enough for beauty
               minChildSize: 0.5,
               maxChildSize: 0.95,
               expand: false,
               builder: (context, scrollController) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
                   ),
                   child: Column(
                     children: [
-                      // Handle bar
                       Container(
                         width: 40,
                         height: 5,
@@ -259,40 +277,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      
                       const Text(
                         "Select Language",
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 20),
-
                       Expanded(
                         child: ListView(
                           controller: scrollController,
                           children: [
-                            _languageItem("English", tempLanguage, (val) => setModalState(() => tempLanguage = val)),
-                            _languageItem("Khmer", tempLanguage, (val) => setModalState(() => tempLanguage = val)),
-                            _languageItem("Chinese", tempLanguage, (val) => setModalState(() => tempLanguage = val)),
-                            _languageItem("French", tempLanguage, (val) => setModalState(() => tempLanguage = val)),
+                            _languageItem(
+                              "English",
+                              tempLanguage,
+                              (val) => setModalState(() => tempLanguage = val),
+                            ),
+                            _languageItem(
+                              "Khmer",
+                              tempLanguage,
+                              (val) => setModalState(() => tempLanguage = val),
+                            ),
+                            _languageItem(
+                              "Chinese",
+                              tempLanguage,
+                              (val) => setModalState(() => tempLanguage = val),
+                            ),
+                            _languageItem(
+                              "French",
+                              tempLanguage,
+                              (val) => setModalState(() => tempLanguage = val),
+                            ),
                           ],
                         ),
                       ),
-
-                      // 🔷 INTERNAL SAVE BUTTON
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: ElevatedButton(
                           onPressed: () {
-                            setState(() => language = tempLanguage); // Update main screen
-                            Navigator.pop(context); // Close sheet
+                            setState(
+                              () => language = tempLanguage,
+                            );
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF00519C),
                             minimumSize: const Size(double.infinity, 55),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
-                          child: const Text("Apply Language", 
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                          child: const Text(
+                            "Apply Language",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -306,8 +349,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Updated Language Item with callback
-  Widget _languageItem(String lang, String currentTemp, Function(String) onSelect) {
+  Widget _languageItem(
+    String lang,
+    String currentTemp,
+    Function(String) onSelect,
+  ) {
     final isSelected = currentTemp == lang;
 
     return GestureDetector(
@@ -317,7 +363,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF00519C).withOpacity(0.05) : Colors.grey.shade50,
+          color: isSelected
+              ? const Color(0xFF00519C).withOpacity(0.05)
+              : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isSelected ? const Color(0xFF00519C) : Colors.transparent,
@@ -327,8 +375,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Row(
           children: [
             Text(
-              lang == "English" ? "🇺🇸" : lang == "Khmer" ? "🇰🇭" : "🇨🇳", 
-              style: const TextStyle(fontSize: 24)
+              lang == "English"
+                  ? "🇺🇸"
+                  : lang == "Khmer"
+                  ? "🇰🇭"
+                  : "🇨🇳",
+              style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(width: 15),
             Text(
@@ -348,4 +400,3 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
-
