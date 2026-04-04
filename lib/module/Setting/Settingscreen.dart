@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khmer_read/ELearning/Homepage/Homepage.dart';
 import 'package:khmer_read/module/Simple/FloatingHeaderExample.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -99,6 +100,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const FloatingHeaderExample(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildTile(
+                    icon: Icons.person,
+                    title: "My Learning",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
                         ),
                       );
                     },
