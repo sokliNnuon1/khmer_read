@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:khmer_read/ELearning/Homepage/Homepage.dart';
+import 'package:khmer_read/ELearning/Homepage/views/Homepage.dart';
 import 'package:khmer_read/module/Simple/FloatingHeaderExample.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -8,12 +8,10 @@ class SettingsScreen extends StatefulWidget {
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
-
 class _SettingsScreenState extends State<SettingsScreen> {
   bool isDarkMode = false;
   bool isNotification = true;
   String language = "English";
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
