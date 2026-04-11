@@ -1,19 +1,6 @@
+
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CalendarScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -22,219 +9,227 @@ class CalendarScreen extends StatefulWidget {
   State<CalendarScreen> createState() => _CalendarScreenState();
 }
 
+/// MODEL
+class EventModel {
+  final String title;
+  final int status;
+
+  EventModel({required this.title, this.status = 0});
+
+  factory EventModel.fromJson(Map<String, dynamic> json) {
+    return EventModel(
+      title: json['title'],
+      status: json['status'] ?? 0,
+    );
+  }
+}
+
 class _CalendarScreenState extends State<CalendarScreen> {
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+
+  /// 🗂 Store events by date
+  final Map<DateTime, List<EventModel>> _events = {};
+
+  List<EventModel> _selectedEvents = [];
+
+  /// ✅ JSON DATA (replace with API later)
+  final List<Map<String, dynamic>> eventJson = [
+    {
+      "date": "2026-04-11",
+      "title": "Meeting",
+      "status": 1
+    },
+    {
+      "date": "2026-04-11",
+      "title": "Study Flutter",
+      "status": 0
+    },
+    {
+      "date": "2026-04-12",
+      "title": "Project Discussion",
+      "status": 0
+    },
+    {
+      "date": "2026-04-12",
+      "title": "Project Discussion",
+      "status": 0
+    },
+    {
+      "date": "2026-04-12",
+      "title": "Project Discussion",
+      "status": 0
+    },
+    {
+      "date": "2026-04-12",
+      "title": "Project Discussion",
+      "status": 0
+    },
+    {
+      "date": "2026-04-12",
+      "title": "Project Discussion",
+      "status": 0
+    },
+    {
+      "date": "2026-04-13",
+      "title": "Exam",
+      "status": 1
+    }
+  ];
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
+
+    _loadFromJson();
+    _loadEvents(_selectedDay!);
   }
 
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+  /// 📌 Normalize date (VERY IMPORTANT)
+  DateTime _normalize(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  /// 📥 Load JSON → Map<DateTime, List<EventModel>>
+  void _loadFromJson() {
+    for (var item in eventJson) {
+      DateTime date = DateTime.parse(item['date']);
+      DateTime normalized = _normalize(date);
+
+      if (_events[normalized] == null) {
+        _events[normalized] = [];
+      }
+
+      _events[normalized]!.add(EventModel.fromJson(item));
+    }
+  }
+
+  /// 📅 Get events for calendar
+  List<EventModel> _getEventsForDay(DateTime day) {
+    return _events[_normalize(day)] ?? [];
+  }
+
+  /// 📋 Load selected day events
+  void _loadEvents(DateTime day) {
     setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay; 
+      _selectedEvents = _getEventsForDay(day);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            const SliverAppBar(
-              pinned: true,
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.transparent,
-              elevation: 0,
-              title: Text(
-                "Reading Calendar",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _CalendarDelegate(
-                focusedDay: _focusedDay,
-                selectedDay: _selectedDay,
-                calendarFormat: _calendarFormat,
-                onDaySelected: _onDaySelected,
-                onFormatChanged: (format) => setState(() => _calendarFormat = format),
-                onPageChanged: (focusedDay) => _focusedDay = focusedDay,
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => _buildItem(index),
-                  childCount: 15,
-                ),
-              ),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text("Academic Calendar"),
+        centerTitle: true,
       ),
-    );
-  }
+      body: Column(
+        children: [
+          /// 📅 CALENDAR
+          TableCalendar<EventModel>(
+            firstDay: DateTime.utc(2020, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
 
-  Widget _buildItem(int index) {
-    return Container(
-      margin: const EdgeInsets.only(top: 15),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9F9FF),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: ListTile(
-        leading: const Icon(Icons.menu_book, color: Color(0xFF7B88FF)),
-        title: Text("Reading Chapter ${index + 1}"),
-        subtitle: const Text("Progress: 45%"),
-        trailing: const Icon(Icons.chevron_right),
-      ),
-    );
-  }
-}
+            selectedDayPredicate: (day) =>
+                isSameDay(_selectedDay, day),
 
-class _CalendarDelegate extends SliverPersistentHeaderDelegate {
-  final DateTime focusedDay;
-  final DateTime? selectedDay;
-  final CalendarFormat calendarFormat;
-  final Function(DateTime, DateTime) onDaySelected;
-  final Function(CalendarFormat) onFormatChanged;
-  final Function(DateTime) onPageChanged;
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay;
+              });
+              _loadEvents(selectedDay);
+            },
 
-  _CalendarDelegate({
-    required this.focusedDay,
-    required this.selectedDay,
-    required this.calendarFormat,
-    required this.onDaySelected,
-    required this.onFormatChanged,
-    required this.onPageChanged,
-  });
+            onFormatChanged: (format) {
+              setState(() {
+                _calendarFormat = format;
+              });
+            },
 
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final bool isCollapsed = shrinkOffset > 100;
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          if (isCollapsed)
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-        ],
-      ),
-      child: ClipRect(
-        child: OverflowBox(
-          minHeight: 0,
-          maxHeight: maxExtent,
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: TableCalendar(
-              key: const ValueKey('calendar'),
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: focusedDay,
-              selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-              calendarFormat: isCollapsed ? CalendarFormat.week : calendarFormat,
-              rowHeight: 52,
-              daysOfWeekHeight: 30,
-              onDaySelected: onDaySelected,
-              onFormatChanged: onFormatChanged,
-              onPageChanged: onPageChanged,
-              onHeaderTapped: (date) async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: date,
-                  firstDate: DateTime.utc(2020, 1, 1),
-                  lastDate: DateTime.utc(2030, 12, 31),
+            eventLoader: _getEventsForDay,
+
+            /// 🔴 MARKER
+            calendarBuilders: CalendarBuilders(
+              markerBuilder: (context, date, events) {
+                if (events.isEmpty) return null;
+
+                bool hasImportant =
+                    events.any((e) => e.status == 1);
+
+                return Positioned(
+                  bottom: 6,
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color:
+                          hasImportant ? Colors.red : Colors.blue,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 );
-                if (picked != null) onPageChanged(picked);
               },
-              headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                leftChevronIcon: Icon(Icons.chevron_left_rounded, color: Colors.black54),
-                rightChevronIcon: Icon(Icons.chevron_right_rounded, color: Colors.black54),
-                titleTextStyle: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
-              ),
-
-              calendarStyle: CalendarStyle(
-                selectedDecoration: BoxDecoration(
-                  color: const Color(0xFF7B88FF),
-                  shape: BoxShape.rectangle, 
-                  borderRadius: BorderRadius.circular(12),
-                ),
-
-                // 2. Today
-                todayDecoration: BoxDecoration(
-                  color: const Color(0xFFF0F2FF),
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-
-                // 3. Weekends
-                weekendDecoration: const BoxDecoration(
-                  shape: BoxShape.rectangle, 
-                ),
-
-                // 4. Default Days
-                defaultDecoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                ),
-
-                // 5. Outside Days (dates from other months)
-                outsideDecoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                ),
-
-                // 6. Holiday/Disabled/Marker decorations
-                holidayDecoration: const BoxDecoration(shape: BoxShape.rectangle),
-                disabledDecoration: const BoxDecoration(shape: BoxShape.rectangle),
-
-                todayTextStyle: const TextStyle(
-                  color: Color(0xFF7B88FF),
-                  fontWeight: FontWeight.bold,
-                ),
-                outsideDaysVisible: false,
-              ),
-
-              daysOfWeekStyle: const DaysOfWeekStyle(
-                weekdayStyle: TextStyle(color: Colors.black38, fontWeight: FontWeight.bold, fontSize: 12),
-                weekendStyle: TextStyle(color: Colors.black38, fontWeight: FontWeight.bold, fontSize: 12),
-              ),
             ),
           ),
-        ),
+
+          const SizedBox(height: 10),
+
+          /// 👇 SCROLLABLE LIST WITH RESPONSIVE CALENDAR
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (scroll) {
+                if (scroll is ScrollUpdateNotification) {
+                  /// ⬇️ collapse
+                  if (scroll.metrics.pixels > 20 &&
+                      _calendarFormat == CalendarFormat.month) {
+                    setState(() {
+                      _calendarFormat = CalendarFormat.week;
+                    });
+                  }
+
+                  /// ⬆️ expand
+                  else if (scroll.metrics.pixels < -50 &&
+                      _calendarFormat == CalendarFormat.week) {
+                    setState(() {
+                      _calendarFormat = CalendarFormat.month;
+                    });
+                  }
+                }
+                return true;
+              },
+              child: _selectedEvents.isEmpty
+                  ? const Center(child: Text("No Events"))
+                  : ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: _selectedEvents.length,
+                      itemBuilder: (context, index) {
+                        final event = _selectedEvents[index];
+
+                        return ListTile(
+                          leading: Icon(
+                            Icons.circle,
+                            size: 10,
+                            color: event.status == 1
+                                ? Colors.red
+                                : Colors.blue,
+                          ),
+                          title: Text(event.title),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  @override
-  double get maxExtent => 440; 
-
-  @override
-  double get minExtent => 180; 
-
-  @override
-  bool shouldRebuild(covariant _CalendarDelegate oldDelegate) {
-    return oldDelegate.focusedDay != focusedDay || 
-      oldDelegate.selectedDay != selectedDay ||
-      oldDelegate.calendarFormat != calendarFormat;
   }
 }
